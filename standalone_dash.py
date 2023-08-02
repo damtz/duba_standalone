@@ -1,9 +1,10 @@
-import pandas as pd
 import dash
+import dash_bootstrap_components as dbc
 import dash_html_components as html
 import dash_core_components as dcc
 import plotly.express as px
 import plotly.graph_objs as go
+import pandas as pd
 
 df = pd.read_csv("House_Rent_Dataset.csv")
 cities = df["City"].value_counts()
@@ -11,21 +12,52 @@ label = cities.index
 counts = cities.values
 colors = ['gold', 'lightgreen']
 
-app = dash.Dash(__name__, suppress_callback_exceptions=True)
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], suppress_callback_exceptions=True)
+
+def generate_navbar():
+    return html.A(
+        dbc.Navbar(
+            dbc.Container(
+                [
+                    dbc.Row(
+                        [
+                            dbc.Col(html.I(className='fa fa-line-chart', style={'font-size': '24px', 'margin-right': '5px', 'color': 'black'}), align='start'),
+                            dbc.Col("Prediction", style={'font-size': '24px', 'color': 'black'}, align='start')
+                        ],
+                        align='center',
+                        no_gutters=True,
+                    ),
+                ]
+            ),
+            color="light",
+            dark=False,
+            sticky="top",
+        ),
+        href="http://10.70.91.61/home",  # Replace '/prediction' with the URL of the page you want to navigate to
+        style={'text-decoration': 'none'}  # Add this style to remove the underline
+    )
 
 app.layout = html.Div([
-    dcc.Tabs(id="tabs", value='tab-1', children=[
-        dcc.Tab(label='Pie Chart', value='tab-1'),
-        dcc.Tab(label='Donut Chart', value='tab-2'),
-        dcc.Tab(label='Histogram', value='tab-3'),
-        dcc.Tab(label='Box Plot', value='tab-4'),
-        dcc.Tab(label='Scatter Plot Graph', value='tab-5'),
-        dcc.Tab(label='Bar Graph', value='tab-6'),
-        dcc.Tab(label='Avg. Rent (Bar Graph)', value='tab-7'),
-    ]),
+    html.Link(
+    rel='stylesheet',
+    href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css'
+    ),
+    generate_navbar(),
+    dbc.Col(
+        dcc.Tabs(id="tabs", value='tab-1', children=[
+            dcc.Tab(label='Pie Chart', value='tab-1'),
+            dcc.Tab(label='Donut Chart', value='tab-2'),
+            dcc.Tab(label='Histogram', value='tab-3'),
+            dcc.Tab(label='Box Plot', value='tab-4'),
+            dcc.Tab(label='Scatter Plot Graph', value='tab-5'),
+            dcc.Tab(label='Bar Graph', value='tab-6'),
+            dcc.Tab(label='Avg. Rent (Bar Graph)', value='tab-7'),
+        ]),
+    ),
     html.Div(id='tabs-content')
 ])
 
+# The rest of the callbacks and content rendering are the same as before...
 @app.callback(
     dash.dependencies.Output('tabs-content', 'children'),
     [dash.dependencies.Input('tabs', 'value')]
@@ -188,5 +220,12 @@ def update_bar_graph(selected_value):
     figure_bar.update_layout(title=title)  #  title for the bar graph
     return figure_bar
 
-if __name__ == "__main__":
-    app.run_server(port=8050)  # Run the Dash app on port 8050
+    
+if __name__ == '__main__':
+    app.run_server(debug=False, host='0.0.0.0')
+
+
+
+
+
+
