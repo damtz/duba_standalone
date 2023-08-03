@@ -14,6 +14,8 @@ colors = ['gold', 'lightgreen']
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], suppress_callback_exceptions=True)
 
+app.title = "Analysis"
+
 def generate_navbar():
     return html.A(
         dbc.Navbar(
